@@ -85,9 +85,30 @@ RxJS 有许多操作符来帮助你控制observables中的事件流
         .scan(count => count+1， 0)
         .subscribe(count => console.log(`Clicked ${count} time`));
 ```
-
-
-
+## 值
+你能够通过observables来传递值
+下面是一个可以通过纯JS来为每一次点击添加鼠标的X坐标
+```
+    var count = 0;
+    var rate = 1000;
+    var lastClick = Date.now() - rate;
+    var button = document.querySelector('button');
+    button.addEventListener('click', () => {
+        if(Date.now() - lastClick >= rate){
+            console.log(++count + event.clientX);
+            lastClick = Date.now();
+        }
+    });
+```
+使用RxJS
+```
+    var button = document.querySelector('button');
+    Rx.Observable.fromEvent(button,'click')
+        .throttleTime(1000)
+        .map(event => event.clientX)
+        .scan((count, clientX) => count+clientX, 0)
+        .subscribe(count => console.log(count));
+```
 
 
 
